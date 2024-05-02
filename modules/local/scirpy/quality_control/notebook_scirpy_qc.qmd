@@ -1,0 +1,265 @@
+---
+title: "Module - TCR Quality"
+author: "SCRATCH"
+execute:
+  freeze: auto
+  cache: false
+jupyter: python3
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    code-fold: show
+    code-tools: true
+    fig-align: 'center'
+    fig-format: png
+    fig-responsive: true
+  ipynb:
+    prefer-html: true
+lightbox:
+    match: auto
+    effect: zoom
+    loop: true
+format-links: [ipynb]
+---
+
+```{python}
+#| tags: [parameters]
+#| include: False
+
+import os
+
+# Parameters
+project_name         = "Project"
+meta_data_csv        = "/Users/affaustino/Projects/SCRATCH-QC/data/Yost_meta_data.csv"
+path_vdj_folder      = "/Users/affaustino/Projects/SCRATCH-QC/data/tcr"
+clonotype_definition = "VDJ"
+
+# Directory and outputs
+work_directory       = os.getcwd()
+output_object        = "{work_directory}/{project_name}_{object_label}".format(work_directory = work_directory, project_name = project_name, object_label = "tcr_repertoire.h5ad")
+
+```
+
+:::{.callout-important collapse="true"}
+
+Here we will print the parameters
+
+:::
+
+# Project Name: Yost et al 2018
+
+```{python}
+#| output: false
+
+import scanpy as sc
+import scirpy as ir
+import pandas as pd
+import numpy as np
+import seaborn as sb
+
+import session_info
+
+sc.set_figure_params(figsize=(4, 4))
+
+```
+
+## Loading data
+
+```{python}
+#| output: false
+
+adata_tcr_project = []
+
+for sample_tcr in os.listdir(path_vdj_folder):
+
+  contigs = os.path.join(path_vdj_folder, f"{sample_tcr}/filtered_contig_annotations.csv")
+  adata_tmp = ir.io.read_10x_vdj(contigs)
+
+  # Assign sample identifier
+  adata_tmp.obs['sample_id'] = sample_tcr
+  adata_tcr_project.append(adata_tmp) 
+
+```
+
+```{python}
+
+meta_data = pd.read_csv(meta_data_csv)
+meta_data.set_index('sample_id', inplace=True)
+
+```
+
+## Concatenate data
+
+```{python}
+#| output: false
+
+adata_tcr = adata_tcr_project[0].concatenate(adata_tcr_project[1:])
+print(f"Amount cells: {adata_tcr.n_obs}")
+
+```
+
+## Merging metadata
+
+```{python}
+
+adata_tcr.obs = pd.merge(
+  adata_tcr.obs, meta_data, left_on='sample_id', right_index=True, how='left')
+
+```
+```{python}
+#| include: false
+
+adata_tcr.obs.head(5)
+
+```
+
+## Clonotype abundance
+
+```{python}
+
+ir.tl.chain_qc(adata_tcr)
+
+```
+
+```{python}
+#| label: fig-rep-qc
+#| fig-width: 15
+#| fig-height: 10
+#| fig-align: center
+
+_ = ir.pl.group_abundance(adata_tcr, groupby="sample_id", target_col="chain_pairing", normalize = True)
+
+```
+
+```{python}
+#| label: fig-rep-sb
+#| fig-width: 15
+#| fig-height: 10
+#| fig-align: center
+#| layout-ncol: 2
+
+_ = ir.pl.group_abundance(
+    adata_tcr, groupby="sample_id", target_col="receptor_type")
+
+_ = ir.pl.group_abundance(
+    adata_tcr, groupby="sample_id", target_col="receptor_subtype")
+
+```
+
+## Clonotype definition
+
+```{python}
+
+ir.pp.ir_dist(adata_tcr, sequence = "aa")
+
+```
+
+```{python}
+
+ir.tl.define_clonotype_clusters(
+    adata_tcr, sequence = "aa", receptor_arms = clonotype_definition, dual_ir = "primary_only", n_jobs = 1
+)
+
+```
+
+```{python}
+
+ir.tl.clonotype_network(adata_tcr, min_cells = 50, sequence = "aa")
+adata_tcr.obs["cc_aa_identity"] = adata_tcr.obs["cc_aa_identity"].astype("str")
+
+```
+
+::: {.panel-tabset}
+
+## By sample
+
+```{python}
+
+# By sample
+
+_ = ir.pl.group_abundance(
+    adata_tcr,
+    groupby = "cc_aa_identity",
+    target_col = "sample_id",
+    max_cols = 15,
+    fig_kws = {"dpi": 100},
+    figsize = [10, 10],
+)
+
+```
+
+## By patient
+
+```{python}
+
+_ = ir.pl.group_abundance(
+    adata_tcr,
+    groupby = "cc_aa_identity",
+    target_col = "Donor",
+    max_cols = 15,
+    fig_kws = {"dpi": 100},
+    figsize = [10, 10],
+)
+
+```
+
+## By treatment
+
+```{python}
+
+_ = ir.pl.group_abundance(
+    adata_tcr,
+    groupby ="cc_aa_identity",
+    target_col = "treatment",
+    max_cols = 15,
+    fig_kws = {"dpi": 100},
+    figsize = [10, 10],
+)
+
+```
+
+:::
+
+## Patient comparison
+
+```{python}
+
+df, dst, lk = ir.tl.repertoire_overlap(
+    adata_tcr, "sample_id", target_col = "cc_aa_identity", inplace = False
+)
+
+```
+
+```{python}
+
+df
+
+```
+
+```{python}
+#| output: false
+
+#ir.pl.repertoire_overlap(
+#    adata_tcr, "sample_id", target_col = "cc_aa_identity", heatmap_cats = ['treatment', 'Donor']
+#)
+
+```
+
+## Saving Data object
+
+```{python}
+#| cache: false
+
+adata.write_h5ad(output_object)
+
+```
+
+## Session info
+
+```{python}
+
+session_info.show()
+
+```

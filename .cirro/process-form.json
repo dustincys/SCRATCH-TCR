@@ -1,0 +1,22 @@
+{
+    "ui": {},
+    "form": {
+        "title": "SCRATCH TCR",
+        "type": "object",
+        "properties": {
+            "pipeline_parameters": {
+            "title": "Pipeline parameters",
+            "type": "object",
+            "properties": {
+                    "input_annotator": {
+                        "type": "string",
+                        "title": "Annotated object",
+                        "file": "**/*",
+                        "pathType": "dataset",
+                        "description": "Select the input file."
+                    }
+                }
+            }
+        }
+    }
+}

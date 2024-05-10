@@ -7,7 +7,6 @@ testing*
 *.ipynb
 .DS_Store
 *.log
-*.json
 
 # Dev
 Project/

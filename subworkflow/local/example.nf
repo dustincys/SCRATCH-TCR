@@ -12,6 +12,7 @@ workflow NFQUARTO_EXAMPLE {
         // Importing notebook
         ch_notebookA   = Channel.fromPath(params.notebookA, checkIfExists: true)
 
+        // Quarto settings
         ch_template    = Channel.fromPath(params.template, checkIfExists: true)
         ch_page_config = Channel.fromPath(params.page_config, checkIfExists: true)
             .collect()

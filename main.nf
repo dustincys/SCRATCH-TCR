@@ -9,9 +9,7 @@ include { NFQUARTO_EXAMPLE } from './subworkflow/local/example.nf'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// def checkPathParamList = [params.paramA, params.paramB, params.paramC]
-// for (param in checkPathParamList) if (param) file(param, checkIfExists: true)
-
+if (params.input_annotated_object) { input_annotated_object = file(params.input_annotated_object) } else { exit 1, 'Please, provide a --input <PATH/TO/seurat_object.RDS> !' }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN ALL WORKFLOWS
@@ -20,16 +18,20 @@ include { NFQUARTO_EXAMPLE } from './subworkflow/local/example.nf'
 
 workflow {
 
-    // Description
-    ch_input       = Channel.fromPath(params.input, checkIfExists: true)
+    log.info """\
+
+        Parameters:
+
+        VDJ: ${input_vdj_contigs}
+        Annotated: ${input_annotated_object}
+
+    """
 
     // Description
-    ch_template    = Channel.fromPath(params.template, checkIfExists: true)
-    ch_page_config = Channel.fromPath(params.page_config, checkIfExists: true)
-        .collect()
+    input_annotated_object       = Channel.fromPath(params.input_annotated_object, checkIfExists: true)
 
     NFQUARTO_EXAMPLE(
-        ch_input
+        input_annotated_object
     )
 
 }

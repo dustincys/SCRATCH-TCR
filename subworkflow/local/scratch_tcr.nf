@@ -6,8 +6,8 @@ include {  SCIRPY_INTEGRATION      } from '../../modules/local/scirpy/integratio
 workflow SCRATCH_TCR {
 
     take:
-        ch_vdj_contigs
-        ch_exp_table
+        ch_vdj_contigs        // channel: []
+        ch_exp_table          // channel: []
         ch_annotated_object   // channel: []
 
     main:

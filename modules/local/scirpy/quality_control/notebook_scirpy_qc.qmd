@@ -32,8 +32,8 @@ import os
 
 # Parameters
 project_name         = "Project"
-meta_data_csv        = "/Users/affaustino/Projects/SCRATCH-QC/data/Yost_meta_data.csv"
 path_vdj_folder      = "/Users/affaustino/Projects/SCRATCH-QC/data/tcr"
+meta_data_csv        = "/Users/affaustino/Projects/SCRATCH-QC/data/Yost_meta_data.csv"
 clonotype_definition = "VDJ"
 
 # Directory and outputs
@@ -129,7 +129,7 @@ ir.tl.chain_qc(adata_tcr)
 #| fig-height: 10
 #| fig-align: center
 
-_ = ir.pl.group_abundance(adata_tcr, groupby="sample_id", target_col="chain_pairing", normalize = True)
+_ = ir.pl.group_abundance(adata_tcr, groupby = "sample_id", target_col = "chain_pairing", normalize = True)
 
 ```
 
@@ -141,10 +141,10 @@ _ = ir.pl.group_abundance(adata_tcr, groupby="sample_id", target_col="chain_pair
 #| layout-ncol: 2
 
 _ = ir.pl.group_abundance(
-    adata_tcr, groupby="sample_id", target_col="receptor_type")
+    adata_tcr, groupby = "sample_id", target_col = "receptor_type")
 
 _ = ir.pl.group_abundance(
-    adata_tcr, groupby="sample_id", target_col="receptor_subtype")
+    adata_tcr, groupby = "sample_id", target_col = "receptor_subtype")
 
 ```
 

@@ -32,8 +32,8 @@ import os
 
 # Parameters
 project_name         = "Project"
-annotation_anndata   = "/Users/affaustino/Projects/SCRATCH-QC/data/Project_celltypist_annotation.h5ad"
-clonotype_anndata    = "/Users/affaustino/Projects/SCRATCH-QC/data/Project_tcr_repertoire.h5ad"
+gex_anndata          = "/Users/affaustino/Projects/SCRATCH-QC/data/Project_celltypist_annotation.h5ad"
+vdj_anndata          = "/Users/affaustino/Projects/SCRATCH-QC/data/Project_tcr_repertoire.h5ad"
 clonotype_definition = "VDJ"
 
 # Directory and outputs
@@ -71,8 +71,8 @@ sc.set_figure_params(figsize=(4, 4))
 ```{python}
 #| output: false
 
-adata_gex = sc.read(annotation_anndata)
-adata_tcr = sc.read(clonotype_anndata)
+adata_gex = sc.read(gex_anndata)
+adata_tcr = sc.read(vdj_anndata)
 
 ```
 

@@ -25,8 +25,8 @@ workflow {
         Parameters:
 
         VDJ: ${params.input_vdj_contigs}
-        Metadata: ${input_exp_table}
-        Annotated: ${input_annotated_object}
+        Metadata: ${[params.input_exp_table}
+        Annotated: ${params.input_annotated_object}
 
     """
 

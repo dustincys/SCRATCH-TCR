@@ -15,13 +15,10 @@ format:
     fig-align: 'center'
     fig-format: png
     fig-responsive: true
-  ipynb:
-    prefer-html: true
 lightbox:
     match: auto
     effect: zoom
     loop: true
-format-links: [ipynb]
 ---
 
 ```{python}
@@ -31,9 +28,9 @@ format-links: [ipynb]
 import os
 
 # Parameters
-project_name         = "Project"
-gex_anndata          = "/Users/affaustino/Projects/SCRATCH-QC/data/project_celltypist_annotation.h5ad"
-vdj_anndata          = "/Users/affaustino/Projects/SCRATCH-QC/data/project_tcr_repertoire_object.h5ad"
+project_name         = "project"
+gex_anndata          = "/Users/affaustino/Projects/SCRATCH-TCR/data/project_celltypist_annotation_object.h5ad"
+vdj_anndata          = "/Users/affaustino/Projects/SCRATCH-TCR/data/project_tcr_repertoire_object.h5ad"
 clonotype_definition = "VDJ"
 
 # Create data and figures
@@ -50,7 +47,7 @@ output_object        = "{work_directory}/data/{project_name}_{object_label}".for
 Here we will print the parameters
 :::
 
-# Project Name: Yost et al 2018
+## Importing packages
 
 ```{python}
 #| output: false

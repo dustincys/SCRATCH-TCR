@@ -50,7 +50,7 @@ workflow SCRATCH_TCR {
             ch_page_config
         )
 
-        // ch_anndata_vdj = SCIRPY_QUALITY.anndata
+        ch_anndata_vdj = SCIRPY_QUALITY.out.anndata
 
         // Integration
         SCIRPY_INTEGRATION(

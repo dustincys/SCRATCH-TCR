@@ -15,13 +15,10 @@ format:
     fig-align: 'center'
     fig-format: png
     fig-responsive: true
-  ipynb:
-    prefer-html: true
 lightbox:
     match: auto
     effect: zoom
     loop: true
-format-links: [ipynb]
 ---
 
 ```{python}
@@ -31,7 +28,7 @@ format-links: [ipynb]
 import os
 
 # Parameters
-project_name         = "Project"
+project_name         = "project"
 path_vdj_folder      = "/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128514/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128513/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128512/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128528/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128527/"
 meta_data_csv        = "/Users/affaustino/Projects/SCRATCH-TCR/data/pipeline_info/samplesheet.valid.csv"
 clonotype_definition = "VDJ"
@@ -47,12 +44,10 @@ output_object        = "{work_directory}/data/{project_name}_{object_label}".for
 ```
 
 :::{.callout-important collapse="true"}
-
 Here we will print the parameters
-
 :::
 
-# Project Name: Yost et al 2018
+## Importing packages
 
 ```{python}
 #| output: false
@@ -76,14 +71,14 @@ sc.set_figure_params(figsize=(4, 4))
 #| output: false
 
 adata_tcr_project = []
+
 contigs_list = path_vdj_folder.split(';')
+for sample_id in contigs_list:
 
-for sample in contigs_list:
-
-  adata_tmp = ir.io.read_10x_vdj(os.path.join(sample, "outs", "filtered_contig_annotations.csv"))
+  adata_tmp = ir.io.read_10x_vdj(os.path.join(sample_id, "outs", "filtered_contig_annotations.csv"))
 
   # Assign sample identifier
-  adata_tmp.obs['sample'] = sample
+  adata_tmp.obs['sample'] = sample_id
   adata_tcr_project.append(adata_tmp) 
 
 ```
@@ -117,6 +112,9 @@ adata_tcr.obs = pd.merge(
 ```
 ```{python}
 #| include: false
+
+# Working around on h5ad
+adata_tcr_save = adata_tcr
 
 adata_tcr.obs.head(5)
 
@@ -214,28 +212,12 @@ _ = ir.pl.group_abundance(
 
 :::
 
-## Patient comparison
-
-```{python}
-
-df, dst, lk = ir.tl.repertoire_overlap(
-    adata_tcr, "sample", target_col = "cc_aa_identity", inplace = False
-)
-
-```
-
-```{python}
-
-df
-
-```
-
 ## Saving Data object
 
 ```{python}
 #| cache: false
 
-adata_tcr.write_h5ad(output_object)
+adata_tcr_save.write_h5ad(output_object)
 
 ```
 

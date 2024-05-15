@@ -20,13 +20,13 @@ process SCIRPY_INTEGRATION {
         task.ext.when == null || task.ext.when
 
     shell:
-        def param_file = task.ext.args ? "-P vdj_anndata:'${vdj_anndata}' -P gex_anndata:${gex_anndata} -P ${task.ext.args}" : ""
+        def param_file = task.ext.args ? "-P vdj_anndata:${vdj_anndata} -P gex_anndata:${gex_anndata} -P ${task.ext.args}" : ""
         """
         quarto render ${notebook} -P ${param_file}
         """
 
     stub:
-        def param_file = task.ext.args ? "-P vdj_anndata:'${vdj_anndata}' -P gex_anndata:${gex_anndata} -P ${task.ext.args}" : ""
+        def param_file = task.ext.args ? "-P vdj_anndata:${vdj_anndata} -P gex_anndata:${gex_anndata} -P ${task.ext.args}" : ""
         """
         mkdir -p data _freeze/${notebook.baseName}
         mkdir -p _freeze/DUMMY/figure-html

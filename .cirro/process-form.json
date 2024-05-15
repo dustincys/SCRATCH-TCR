@@ -11,7 +11,7 @@
                     "input_annotator": {
                         "type": "string",
                         "title": "Annotated object",
-                        "file": "**/*",
+                        "file": "**/*.annotation.*",
                         "pathType": "dataset",
                         "description": "Select the input file."
                     }

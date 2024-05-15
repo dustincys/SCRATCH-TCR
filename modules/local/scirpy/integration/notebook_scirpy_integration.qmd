@@ -82,13 +82,6 @@ adata_tcr = sc.read(vdj_anndata)
 
 ```{python}
 
-adata_gex.obs_names = [name.split('_')[1] for name in adata_gex.obs_names]
-adata_tcr.obs_names = [name[:-2] for name in adata_tcr.obs_names]
-
-```
-
-```{python}
-
 # Check for duplicates in obs_names
 duplicates = adata_gex.obs_names.duplicated()
 if duplicates.any():
@@ -125,6 +118,41 @@ print("Unique in adata_tcr:", adata_tcr.obs_names.is_unique)
 
 ```
 
+## Checking expected overlap
+
+```{python}
+
+def overlapping_cells(adata_tcr, adata_gex):
+    # Extract cell IDs from TCR and GEX datasets
+    tcr_cells = set(adata_tcr.obs.index)
+    gex_cells = set(adata_gex.obs.index)
+
+    # Find intersection of cell IDs
+    overlapping_cells = tcr_cells.intersection(gex_cells)
+
+    # Calculate the number of overlapping cells
+    num_overlapping_cells = len(overlapping_cells)
+    return num_overlapping_cells
+
+num_overlapping_cells = overlapping_cells(adata_tcr, adata_gex)
+print("Number of overlapping cells:", num_overlapping_cells)
+
+```
+
+```{python}
+
+if num_overlapping_cells == 0:
+
+    # Fixing barcoding
+    adata_gex.obs_names = [re.search(r"[ACGT]{16}-1", cell_id).group() for cell_id in adata_gex.obs_names]
+    adata_tcr.obs_names = [re.search(r"[ACGT]{16}-1", cell_id).group() for cell_id in adata_tcr.obs_names]
+    
+num_overlapping_cells = overlapping_cells(adata_tcr, adata_gex)
+print("Number of overlapping cells:", num_overlapping_cells)
+
+
+```
+
 ## Merging GEX and TCR data
 
 ```{python}
@@ -133,7 +161,18 @@ mdata = MuData({"gex": adata_gex, "airr": adata_tcr})
 
 ```
 
-## Clonotype abundance
+## Calculating dimensions
+
+```{python}
+
+sc.pp.log1p(mdata["gex"])
+sc.pp.pca(mdata["gex"], svd_solver="arpack")
+sc.pp.neighbors(mdata["gex"])
+sc.tl.umap(mdata["gex"])
+
+```
+
+## Clonotype QC
 
 ```{python}
 
@@ -149,6 +188,25 @@ ir.tl.chain_qc(mdata)
 #| fig-align: center
 
 _ = ir.pl.group_abundance(adata_tcr, groupby = "sample", target_col = "chain_pairing", normalize = True)
+
+```
+
+```{python}
+
+print(
+    "Fraction of cells with more than one pair of TCRs: {:.2f}".format(
+        np.sum(mdata.obs["airr:chain_pairing"].isin(["extra VJ", "extra VDJ", "two full chains", "multichain"]))
+        / mdata["airr"].n_obs
+    )
+)
+
+```
+
+## Clonotype UMAP
+
+```{python}
+
+mu.pl.embedding(mdata, basis="gex:umap", color="airr:chain_pairing", groups="multichain")
 
 ```
 

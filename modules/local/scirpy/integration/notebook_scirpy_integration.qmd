@@ -10,11 +10,13 @@ format:
     toc: true
     toc-location: right
     toc-depth: 2
+    embed-resources: true
     code-fold: show
     code-tools: true
-    fig-align: 'center'
     fig-format: png
+    fig-dpi: 300
     fig-responsive: true
+    fig-align: center
 lightbox:
     match: auto
     effect: zoom
@@ -39,7 +41,7 @@ for folder in ['data', 'figures']:
 
 # Directory and outputs
 work_directory       = os.getcwd()
-output_object        = "{work_directory}/data/{project_name}_{object_label}".format(work_directory = work_directory, project_name = project_name, object_label = "_gex_tcr_integration_object.h5ad")
+output_object        = "{work_directory}/data/{project_name}_{object_label}".format(work_directory = work_directory, project_name = project_name, object_label = "gex_tcr_integration_object.h5mu")
 
 ```
 
@@ -57,6 +59,9 @@ import scirpy as ir
 import pandas as pd
 import numpy as np
 import seaborn as sb
+
+import mudata as md
+from mudata import MuData
 
 import session_info
 from collections import defaultdict
@@ -120,145 +125,30 @@ print("Unique in adata_tcr:", adata_tcr.obs_names.is_unique)
 
 ```
 
-```{python}
-
-# Drop the 'batch' column from the .obs DataFrame
-adata_tcr.obs.drop('batch', axis=1, inplace=True)
-
-```
-
 ## Merging GEX and TCR data
 
 ```{python}
 
-ir.pp.merge_with_ir(adata_gex, adata_tcr)
+mdata = MuData({"gex": adata_gex, "airr": adata_tcr})
+
+```
+
+## Clonotype abundance
+
+```{python}
+
+ir.pp.index_chains(mdata)
+ir.tl.chain_qc(mdata)
 
 ```
 
 ```{python}
-
-if 'has_ir' in adata_gex.obs.columns:
-    num_cells_with_tcr = adata_gex.obs['has_ir'].replace({'True': True, 'False': False, 'None': False}).astype(bool).sum()
-    print(f"Number of cells with TCR: {num_cells_with_tcr}")
-else:
-    print("No 'has_ir' field found. Check the correct annotation name.")
-
-```
-## Inspecting clustering
-
-```{python}
-#| fig-align: center
-#| layout-ncol: 1
-#| layout-nrow: 3
-
-sc.pl.umap(
-    adata_gex,
-    color = "celltypist_cell_label_fine",
-    frameon = False,
-    sort_order = False,
-    wspace = 1
-)
-
-sc.pl.umap(
-    adata_gex,
-    color = "celltypist_cell_label_coarse",
-    frameon = False,
-    sort_order = False,
-    wspace = 1
-)
-
-sc.pl.umap(
-    adata_gex,
-    color = "has_ir",
-    frameon = False,
-    sort_order = False,
-    wspace = 1
-)
-
-```
-
-## Spectratype analyis
-
-```{python}
-
-adata_only_tcells = adata_gex[adata_gex.obs['celltypist_cell_label_fine'] == 'T cells'].copy()
-
-```
-
-```{python}
+#| label: fig-rep-qc
 #| fig-width: 15
 #| fig-height: 10
 #| fig-align: center
 
-ir.pl.spectratype(
-    adata_only_tcells,
-    color="celltypist_cell_label_coarse",
-    viztype="curve",
-    curve_layout="shifted",
-    fig_kws={"figsize": [8, 4]},
-    kde_kws={"kde_norm": False},
-)
-
-```
-
-## Clone definition
-
-```{python}
-
-ir.tl.chain_qc(adata_only_tcells)
-
-```
-
-```{python}
-
-ir.pp.ir_dist(adata_only_tcells, sequence="aa")
-
-```
-
-```{python}
-
-ir.tl.define_clonotypes(adata_only_tcells, n_jobs = 1)
-ir.tl.define_clonotype_clusters(
-    adata_only_tcells, sequence="aa", receptor_arms = clonotype_definition, dual_ir="primary_only"
-)
-
-adata_only_tcells.obs["cc_aa_identity"] = adata_only_tcells.obs["cc_aa_identity"].astype("str")
-
-```
-
-## Clonal expansion
-
-```{python}
-
-ir.tl.clonal_expansion(adata_only_tcells, target_col="cc_aa_identity")
-
-```
-
-```{python}
-#| fig-width: 15
-#| fig-height: 10
-#| fig-align: center
-
-_ = ir.pl.clonal_expansion(
-    adata_only_tcells,
-    groupby="celltypist_cell_label_coarse",
-    target_col="cc_aa_identity",
-    clip_at=4,
-    normalize=False,
-    figsize=[10, 10],
-)
-
-```
-
-## Clonotype residency
-
-```{python}
-#| fig-width: 15
-#| fig-height: 10
-#| fig-align: center
-
-ir.pl.repertoire_overlap(
-    adata_only_tcells, "Treatment", pair_to_plot=["pre", "post"], fig_kws={"dpi": 120})
+_ = ir.pl.group_abundance(adata_tcr, groupby = "sample", target_col = "chain_pairing", normalize = True)
 
 ```
 
@@ -267,7 +157,7 @@ ir.pl.repertoire_overlap(
 ```{python}
 #| cache: false
 
-adata_only_tcells.write_h5ad(output_object)
+mdata.write(output_object)
 
 ```
 

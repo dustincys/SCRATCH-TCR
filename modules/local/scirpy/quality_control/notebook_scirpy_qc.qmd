@@ -10,11 +10,13 @@ format:
     toc: true
     toc-location: right
     toc-depth: 2
+    embed-resources: true
     code-fold: show
     code-tools: true
-    fig-align: 'center'
     fig-format: png
+    fig-dpi: 300
     fig-responsive: true
+    fig-align: center
 lightbox:
     match: auto
     effect: zoom
@@ -105,6 +107,9 @@ print(f"Amount cells: {adata_tcr.n_obs}")
 ## Merging metadata
 
 ```{python}
+
+# Drop the 'batch' column from the .obs DataFrame
+adata_tcr.obs.drop('batch', axis = 1, inplace = True)
 
 adata_tcr.obs = pd.merge(
   adata_tcr.obs, meta_data, left_on='sample', right_index=True, how='left')

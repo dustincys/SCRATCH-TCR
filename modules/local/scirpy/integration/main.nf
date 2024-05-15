@@ -12,7 +12,7 @@ process SCIRPY_INTEGRATION {
         path(config)
 
     output:
-        path("data/${params.project_name}_gex_tcr_integration_object.h5ad")   , emit: anndata
+        path("data/${params.project_name}_gex_tcr_integration_object.h5mu")   , emit: anndata
         path("report/${notebook.baseName}.html")                         , emit: html
         path("_freeze/**/figure-html/*.png")                             , emit: figures
 
@@ -33,7 +33,7 @@ process SCIRPY_INTEGRATION {
 
         touch _freeze/DUMMY/figure-html/FILE.png
 
-        touch data/${params.project_name}_gex_tcr_integration_object.h5ad
+        touch data/${params.project_name}_gex_tcr_integration_object.h5mu
 
         mkdir -p report
         touch report/${notebook.baseName}.html

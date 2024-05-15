@@ -36,6 +36,7 @@ RUN python3 -m pip install --no-cache-dir jupyter-cache
 RUN python3 -m pip install --no-cache-dir papermill
 
 RUN python3 -m pip install --no-cache-dir scanpy scirpy session_info
+RUN python3 -m pip install --no-cache-dir muon cycler
 
 # Cleaning apt-get cache
 RUN apt-get clean

@@ -32,13 +32,17 @@ import os
 
 # Parameters
 project_name         = "Project"
-path_vdj_folder      = "/Users/affaustino/Projects/SCRATCH-QC/data/tcr"
-meta_data_csv        = "/Users/affaustino/Projects/SCRATCH-QC/data/Yost_meta_data.csv"
+path_vdj_folder      = "/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128514/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128513/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128512/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128528/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128527/"
+meta_data_csv        = "/Users/affaustino/Projects/SCRATCH-TCR/data/pipeline_info/samplesheet.valid.csv"
 clonotype_definition = "VDJ"
+
+# Create data and figures
+for folder in ['data', 'figures']: 
+    os.makedirs(folder, exist_ok = True)
 
 # Directory and outputs
 work_directory       = os.getcwd()
-output_object        = "{work_directory}/{project_name}_{object_label}".format(work_directory = work_directory, project_name = project_name, object_label = "tcr_repertoire.h5ad")
+output_object        = "{work_directory}/data/{project_name}_{object_label}".format(work_directory = work_directory, project_name = project_name, object_label = "tcr_repertoire_object.h5ad")
 
 ```
 
@@ -58,6 +62,7 @@ import scirpy as ir
 import pandas as pd
 import numpy as np
 import seaborn as sb
+import re
 
 import session_info
 
@@ -71,14 +76,14 @@ sc.set_figure_params(figsize=(4, 4))
 #| output: false
 
 adata_tcr_project = []
+contigs_list = path_vdj_folder.split(';')
 
-for sample_tcr in os.listdir(path_vdj_folder):
+for sample in contigs_list:
 
-  contigs = os.path.join(path_vdj_folder, f"{sample_tcr}/filtered_contig_annotations.csv")
-  adata_tmp = ir.io.read_10x_vdj(contigs)
+  adata_tmp = ir.io.read_10x_vdj(os.path.join(sample, "outs", "filtered_contig_annotations.csv"))
 
   # Assign sample identifier
-  adata_tmp.obs['sample_id'] = sample_tcr
+  adata_tmp.obs['sample'] = sample
   adata_tcr_project.append(adata_tmp) 
 
 ```
@@ -86,7 +91,9 @@ for sample_tcr in os.listdir(path_vdj_folder):
 ```{python}
 
 meta_data = pd.read_csv(meta_data_csv)
-meta_data.set_index('sample_id', inplace=True)
+meta_data.drop(columns=['fastq_1', 'fastq_2'], inplace=True)
+
+meta_data.set_index('sample', inplace=True)
 
 ```
 
@@ -105,7 +112,7 @@ print(f"Amount cells: {adata_tcr.n_obs}")
 ```{python}
 
 adata_tcr.obs = pd.merge(
-  adata_tcr.obs, meta_data, left_on='sample_id', right_index=True, how='left')
+  adata_tcr.obs, meta_data, left_on='sample', right_index=True, how='left')
 
 ```
 ```{python}
@@ -129,22 +136,7 @@ ir.tl.chain_qc(adata_tcr)
 #| fig-height: 10
 #| fig-align: center
 
-_ = ir.pl.group_abundance(adata_tcr, groupby = "sample_id", target_col = "chain_pairing", normalize = True)
-
-```
-
-```{python}
-#| label: fig-rep-sb
-#| fig-width: 15
-#| fig-height: 10
-#| fig-align: center
-#| layout-ncol: 2
-
-_ = ir.pl.group_abundance(
-    adata_tcr, groupby = "sample_id", target_col = "receptor_type")
-
-_ = ir.pl.group_abundance(
-    adata_tcr, groupby = "sample_id", target_col = "receptor_subtype")
+_ = ir.pl.group_abundance(adata_tcr, groupby = "sample", target_col = "chain_pairing", normalize = True)
 
 ```
 
@@ -182,7 +174,7 @@ adata_tcr.obs["cc_aa_identity"] = adata_tcr.obs["cc_aa_identity"].astype("str")
 _ = ir.pl.group_abundance(
     adata_tcr,
     groupby = "cc_aa_identity",
-    target_col = "sample_id",
+    target_col = "sample",
     max_cols = 15,
     fig_kws = {"dpi": 100},
     figsize = [10, 10],
@@ -197,7 +189,7 @@ _ = ir.pl.group_abundance(
 _ = ir.pl.group_abundance(
     adata_tcr,
     groupby = "cc_aa_identity",
-    target_col = "Donor",
+    target_col = "patient_id",
     max_cols = 15,
     fig_kws = {"dpi": 100},
     figsize = [10, 10],
@@ -212,7 +204,7 @@ _ = ir.pl.group_abundance(
 _ = ir.pl.group_abundance(
     adata_tcr,
     groupby ="cc_aa_identity",
-    target_col = "treatment",
+    target_col = "timepoint",
     max_cols = 15,
     fig_kws = {"dpi": 100},
     figsize = [10, 10],
@@ -227,7 +219,7 @@ _ = ir.pl.group_abundance(
 ```{python}
 
 df, dst, lk = ir.tl.repertoire_overlap(
-    adata_tcr, "sample_id", target_col = "cc_aa_identity", inplace = False
+    adata_tcr, "sample", target_col = "cc_aa_identity", inplace = False
 )
 
 ```
@@ -238,21 +230,12 @@ df
 
 ```
 
-```{python}
-#| output: false
-
-#ir.pl.repertoire_overlap(
-#    adata_tcr, "sample_id", target_col = "cc_aa_identity", heatmap_cats = ['treatment', 'Donor']
-#)
-
-```
-
 ## Saving Data object
 
 ```{python}
 #| cache: false
 
-adata.write_h5ad(output_object)
+adata_tcr.write_h5ad(output_object)
 
 ```
 

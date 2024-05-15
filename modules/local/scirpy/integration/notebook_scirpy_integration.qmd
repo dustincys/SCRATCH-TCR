@@ -32,20 +32,22 @@ import os
 
 # Parameters
 project_name         = "Project"
-gex_anndata          = "/Users/affaustino/Projects/SCRATCH-QC/data/Project_celltypist_annotation.h5ad"
-vdj_anndata          = "/Users/affaustino/Projects/SCRATCH-QC/data/Project_tcr_repertoire.h5ad"
+gex_anndata          = "/Users/affaustino/Projects/SCRATCH-QC/data/project_celltypist_annotation.h5ad"
+vdj_anndata          = "/Users/affaustino/Projects/SCRATCH-QC/data/project_tcr_repertoire_object.h5ad"
 clonotype_definition = "VDJ"
+
+# Create data and figures
+for folder in ['data', 'figures']: 
+    os.makedirs(folder, exist_ok = True)
 
 # Directory and outputs
 work_directory       = os.getcwd()
-output_object        = "{work_directory}/{project_name}_{object_label}".format(work_directory = work_directory, project_name = project_name, object_label = "gex_tcr_integration.h5ad")
+output_object        = "{work_directory}/data/{project_name}_{object_label}".format(work_directory = work_directory, project_name = project_name, object_label = "_gex_tcr_integration_object.h5ad")
 
 ```
 
 :::{.callout-important collapse="true"}
-
 Here we will print the parameters
-
 :::
 
 # Project Name: Yost et al 2018

@@ -35,9 +35,17 @@ workflow SCRATCH_TCR {
         ch_vdj_contigs = ch_vdj_contigs
             .collect()
 
+        ch_vdj_annotations = ch_vdj_contigs
+            .map{ file -> file.findAll { it.toString().endsWith('filtered_contig_annotations.csv') }  }
+            .map{ file -> file.parent.parent }
+            .collect()
+
+        ch_vdj_annotations
+            .view()
+        
         SCIRPY_QUALITY(
             ch_notebook_tcr_quality,
-            ch_vdj_contigs,
+            ch_vdj_annotations,
             ch_exp_table,
             ch_page_config
         )
@@ -45,10 +53,12 @@ workflow SCRATCH_TCR {
         // ch_anndata_vdj = SCIRPY_QUALITY.anndata
 
         // Integration
-        // SCIRPY_INTEGRATION(
-        //     ch_anndata_vdj,
-        //     ch_annotated_object
-        // )
+        SCIRPY_INTEGRATION(
+            ch_notebook_tcr_integration,
+            ch_anndata_vdj,
+            ch_annotated_object,
+            ch_page_config
+        )
 
     emit:
         ch_versions = ch_versions

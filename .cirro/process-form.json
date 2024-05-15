@@ -8,10 +8,10 @@
             "title": "Pipeline parameters",
             "type": "object",
             "properties": {
-                    "input_annotator": {
+                    "input_annotated_object": {
                         "type": "string",
                         "title": "Annotated object",
-                        "file": "**/*annotation*",
+                        "file": "**/*annotation*.h5ad",
                         "pathType": "dataset",
                         "description": "Select the input file."
                     }

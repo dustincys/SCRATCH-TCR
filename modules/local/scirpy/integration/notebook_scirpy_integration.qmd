@@ -31,8 +31,8 @@ import os
 
 # Parameters
 project_name         = "project"
-gex_anndata          = "/Users/affaustino/Projects/SCRATCH-TCR/data/project_celltypist_annotation_object.h5ad"
-vdj_anndata          = "/Users/affaustino/Projects/SCRATCH-TCR/data/project_tcr_repertoire_object.h5ad"
+gex_anndata          = "/workspaces/SCRATCH-TCR/data/project_celltypist_annotation_object.h5ad"
+vdj_anndata          = "/workspaces/SCRATCH-TCR/data/project_tcr_repertoire_object.h5ad"
 clonotype_definition = "VDJ"
 
 # Create data and figures
@@ -59,6 +59,7 @@ import scirpy as ir
 import pandas as pd
 import numpy as np
 import seaborn as sb
+import re
 
 import mudata as md
 from mudata import MuData
@@ -150,7 +151,6 @@ if num_overlapping_cells == 0:
 num_overlapping_cells = overlapping_cells(adata_tcr, adata_gex)
 print("Number of overlapping cells:", num_overlapping_cells)
 
-
 ```
 
 ## Merging GEX and TCR data
@@ -206,7 +206,7 @@ print(
 
 ```{python}
 
-mu.pl.embedding(mdata, basis="gex:umap", color="airr:chain_pairing", groups="multichain")
+# mu.pl.embedding(mdata, basis="gex:umap", color="airr:chain_pairing", groups="multichain")
 
 ```
 

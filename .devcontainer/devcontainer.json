@@ -5,6 +5,9 @@
     // Configure properties specific to VS Code.
     "vscode": {
       // Add the IDs of extensions you want installed when the container is created.
+      "settings": {
+        "extensions.verifySignature": false
+      },
       "extensions": [
         "streetsidesoftware.code-spell-checker",
         "ms-toolsai.jupyter",

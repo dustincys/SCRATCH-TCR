@@ -64,6 +64,9 @@ import re
 import mudata as md
 from mudata import MuData
 
+import matplotlib.pyplot as plt
+import muon as mu
+
 import session_info
 from collections import defaultdict
 
@@ -78,44 +81,6 @@ sc.set_figure_params(figsize=(4, 4))
 
 adata_gex = sc.read(gex_anndata)
 adata_tcr = sc.read(vdj_anndata)
-
-```
-
-```{python}
-
-# Check for duplicates in obs_names
-duplicates = adata_gex.obs_names.duplicated()
-if duplicates.any():
-    print(f"There are {duplicates.sum()} duplicate names in the dataset.")
-else:
-    print("No duplicates found. Check obs_names uniqueness in both datasets.")
-
-```
-
-```{python}
-
-def append_counter_to_duplicates(names):
-    name_count = defaultdict(int)
-    new_names = []
-    for name in names:
-        if name_count[name] > 0:
-            new_name = f"{name}-{name_count[name]}"
-        else:
-            new_name = name
-        name_count[name] += 1
-        new_names.append(new_name)
-    return new_names
-
-adata_gex.obs_names = append_counter_to_duplicates(adata_gex.obs_names)
-adata_tcr.obs_names = append_counter_to_duplicates(adata_tcr.obs_names)
-
-```
-
-```{python}
-
-# Check uniqueness in both datasets
-print("Unique in adata_gex:", adata_gex.obs_names.is_unique)
-print("Unique in adata_tcr:", adata_tcr.obs_names.is_unique)
 
 ```
 
@@ -150,6 +115,47 @@ if num_overlapping_cells == 0:
     
 num_overlapping_cells = overlapping_cells(adata_tcr, adata_gex)
 print("Number of overlapping cells:", num_overlapping_cells)
+
+```
+
+## Removing duplicates
+
+```{python}
+
+# Check for duplicates in obs_names
+duplicates = adata_gex.obs_names.duplicated()
+
+if duplicates.any():
+    print(f"There are {duplicates.sum()} duplicate names in the dataset.")
+else:
+    print("No duplicates found. Check obs_names uniqueness in both datasets.")
+
+```
+
+```{python}
+
+def append_counter_to_duplicates(names):
+    name_count = defaultdict(int)
+    new_names = []
+    for name in names:
+        if name_count[name] > 0:
+            new_name = f"{name}-{name_count[name]}"
+        else:
+            new_name = name
+        name_count[name] += 1
+        new_names.append(new_name)
+    return new_names
+
+adata_gex.obs_names = append_counter_to_duplicates(adata_gex.obs_names)
+adata_tcr.obs_names = append_counter_to_duplicates(adata_tcr.obs_names)
+
+```
+
+```{python}
+
+# Check uniqueness in both datasets
+print("Unique in adata_gex:", adata_gex.obs_names.is_unique)
+print("Unique in adata_tcr:", adata_tcr.obs_names.is_unique)
 
 ```
 
@@ -206,7 +212,21 @@ print(
 
 ```{python}
 
-# mu.pl.embedding(mdata, basis="gex:umap", color="airr:chain_pairing", groups="multichain")
+mu.pl.embedding(mdata, basis="gex:umap", color= "airr:receptor_type")
+
+```
+
+```{python}
+
+mu.pl.embedding(mdata, basis="gex:umap", color ="airr:chain_pairing", groups = "multichain")
+
+```
+
+## Cell annotation
+
+```{python}
+
+mu.pl.embedding(mdata, basis="gex:umap", color = "gex:celltypist_cell_label_coarse")
 
 ```
 

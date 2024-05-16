@@ -14,7 +14,7 @@ def setup_input_parameters(ds: PreprocessDataset):
     input_vdj_contigs = f'{alignment_dataset[0]["s3"]}/data/data/SCRATCH_ALIGN:CELLRANGER_VDJ/**/outs/*'
     ds.add_param('input_vdj_contigs', input_vdj_contigs)
 
-    input_exp_table = f'{alignment_dataset[0]["s3"]}/data/data/pipeline_info/samplesheet.valid.csv'
+    input_exp_table = f'{alignment_dataset[0]["s3"]}/data/pipeline_info/samplesheet.valid.csv'
     ds.add_param('input_exp_table', input_exp_table)
 
     ds.remove_param('dataset_inputs')

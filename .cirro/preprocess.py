@@ -8,7 +8,7 @@ def setup_input_parameters(ds: PreprocessDataset):
 
     dataset_inputs = ds.params['dataset_inputs']
     alignment_dataset = [d for d in dataset_inputs if d['process'] == "scratch-alignment-1-0"]
-    if len(alignment_dataset) == 0 or len(alignment_dataset) == 1:
+    if len(alignment_dataset) == 0 or len(alignment_dataset) > 1:
         raise RuntimeError("Must provide one scratch-alignment-1-0 dataset")
 
     input_vdj_contigs = f'{alignment_dataset[0]["s3"]}/data/SCRATCH_ALIGN:CELLRANGER_VDJ/**/outs/*'

@@ -25,7 +25,7 @@ workflow {
         Parameters:
 
         VDJ: ${params.input_vdj_contigs}
-        Metadata: ${[params.input_exp_table}
+        Metadata: ${params.input_exp_table}
         Annotated: ${params.input_annotated_object}
 
     """
@@ -48,4 +48,5 @@ workflow.onComplete {
         workflow.success ? "\nDone! Open the following report in your browser -> ${launchDir}/${params.project_name}/report/index.html\n" :
         "Oops... Something went wrong"
     )
+
 }

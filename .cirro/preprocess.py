@@ -6,17 +6,22 @@ import os
 
 def setup_input_parameters(ds: PreprocessDataset):
 
-    # If the user did not select a custom malignant table, use the default
-    if ds.params.get("input_cell_mask") is None:
-        ds.add_param(
-            "input_cell_mask",
-            "${baseDir}/assets/NO_FILE"
-        )
+    alignment_dataset = [d for d in dataset_inputs if d['process'] == "scratch-alignment-1-0"]
+    if len(alignment_dataset) == 0 or len(alignment_dataset) == 1:
+        raise RuntimeError(f"Must provide one scratch-alignment-1-0 dataset")
+
+    input_vdj_contigs = f"{alignment_dataset[0]["s3"]}/data/SCRATCH_ALIGN:CELLRANGER_VDJ/**/outs/*"
+    ds.add_param('input_vdj_contigs', input_vdj_contigs)
+
+    input_exp_table = f"{alignment_dataset[0]["s3"]}/data/pipeline_info/samplesheet.valid.csv"
+    ds.add_param('input_exp_table', input_exp_table)
+
+    ds.remove_param('dataset_inputs')
 
 if __name__ == "__main__":
 
     ds = PreprocessDataset.from_running()
-    # setup_input_parameters(ds)
+    setup_input_parameters(ds)
 
     ds.logger.info("Exported paths:")
     ds.logger.info(os.environ['PATH'])

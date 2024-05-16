@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 include {  SCIRPY_QUALITY          } from '../../modules/local/scirpy/quality_control/main.nf'
-// include {  SCIRPY_INTEGRATION      } from '../../modules/local/scirpy/integration/main.nf'
+include {  SCIRPY_INTEGRATION      } from '../../modules/local/scirpy/integration/main.nf'
 
 workflow SCRATCH_TCR {
 
@@ -53,12 +53,12 @@ workflow SCRATCH_TCR {
         ch_anndata_vdj = SCIRPY_QUALITY.out.anndata
 
         // Integration
-        // SCIRPY_INTEGRATION(
-        //     ch_notebook_tcr_integration,
-        //     ch_anndata_vdj,
-        //     ch_annotated_object,
-        //     ch_page_config
-        // )
+        SCIRPY_INTEGRATION(
+            ch_notebook_tcr_integration,
+            ch_anndata_vdj,
+            ch_annotated_object,
+            ch_page_config
+        )
 
     emit:
         ch_versions = ch_versions

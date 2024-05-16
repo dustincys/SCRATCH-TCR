@@ -135,7 +135,7 @@ ir.tl.chain_qc(adata_tcr)
 
 ```{python}
 #| label: fig-rep-qc
-#| fig-width: 15
+#| fig-width: 20
 #| fig-height: 10
 #| fig-align: center
 

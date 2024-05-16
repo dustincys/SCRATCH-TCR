@@ -1,6 +1,5 @@
 {
-    "input_vdj_contigs": "$.params.inputs[0].s3|/data/data/SCRATCH_ALIGN:CELLRANGER_VDJ/**/outs/*",
+    "dataset_inputs": "$.params.inputs",
     "input_annotated_object": "$.params.dataset.paramJson.pipeline_parameters.input_annotated_object",
-    "input_exp_table": "$.params.inputs[0].s3|/data/pipeline_info/samplesheet.valid.csv",
     "outdir": "$.params.dataset.s3|/data/"
 }

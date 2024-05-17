@@ -231,7 +231,12 @@ mu.pl.embedding(mdata, basis = "gex:umap", color = "airr:chain_pairing")
 #| fig-height: 10
 #| fig-width: 10
 
-mu.pl.embedding(mdata, basis = "gex:umap", color = "gex:predicted_labels", legend_loc='bottom')
+mu.pl.embedding(
+    mdata, 
+    basis = "gex:umap", 
+    color = "gex:predicted_labels", 
+    ncols = 1, 
+    legend_loc = 'lower center')
 
 ```
 

@@ -73,8 +73,6 @@ import muon as mu
 import session_info
 from collections import defaultdict
 
-sc.set_figure_params(figsize=(4, 4))
-
 ```
 
 ## Loading data
@@ -251,13 +249,21 @@ mu.pl.embedding(mdata, basis = "gex:umap", color = "gex:predicted_labels", legen
 ## Clonal expansion
 
 ```{python}
+
+print(f"Clonotype definition based on {clonotype_definition} at {sequence_type}")
+
+```
+
+```{python}
 #| label: fig-expansion-plot
 #| fig-cap: 'Barplot'
 #| fig-cap-location: bottom
 #| fig-height: 12
 #| fig-width: 18
 
+# Sequence type
 cluster_identity = f"cc_{sequence_type}_identity"
+
 ir.pl.clonal_expansion(
     mdata, 
     target_col = cluster_identity, 

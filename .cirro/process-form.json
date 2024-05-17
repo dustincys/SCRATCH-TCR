@@ -21,9 +21,10 @@
                 "title": "Repertoire parameters",
                 "type": "object",
                 "properties": {
-                    "distance_metric": {
+                    "clonotype_definition": {
                         "type": "string",
-                        "title": "Distance metrics",
+                        "title": "Clonotype definition",
+                        "default": "VDJ",
                         "enum": [
                             "VDJ",
                             "VJ",
@@ -31,9 +32,20 @@
                             "any"
                         ]
                     },
+                    "distance_metric": {
+                        "type": "string",
+                        "title": "Sequence type",
+                        "default": "identity",
+                        "enum": [
+                            "levenshtein",
+                            "identity",
+                            "hamming"
+                        ]
+                    },
                     "sequence_type": {
                         "type": "string",
-                        "title": "Distance metrics",
+                        "title": "Sequence type",
+                        "default": "aa",
                         "enum": [
                             "aa",
                             "nt"

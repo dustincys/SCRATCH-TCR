@@ -216,7 +216,7 @@ print(
 ```{python}
 #| label: fig-umap-receptor-plot
 #| fig-cap: 'UMAP'
-#| fig-cap-location: top
+#| fig-cap-location: bottom
 #| fig-height: 10
 #| fig-width: 10
 
@@ -227,7 +227,7 @@ mu.pl.embedding(mdata, basis = "gex:umap", color = "airr:receptor_type")
 ```{python}
 #| label: fig-umap-chaintype-plot
 #| fig-cap: 'UMAP'
-#| fig-cap-location: top
+#| fig-cap-location: bottom
 #| fig-height: 10
 #| fig-width: 10
 
@@ -238,13 +238,13 @@ mu.pl.embedding(mdata, basis = "gex:umap", color = "airr:chain_pairing")
 ## Cell annotation
 
 ```{python}
-#| label: fig-umap-chaintype-plot
+#| label: fig-umap-predicted-plot
 #| fig-cap: 'UMAP'
-#| fig-cap-location: top
+#| fig-cap-location: bottom
 #| fig-height: 10
 #| fig-width: 10
 
-mu.pl.embedding(mdata, basis = "gex:umap", color = "gex:predicted_labels")
+mu.pl.embedding(mdata, basis = "gex:umap", color = "gex:predicted_labels", legend_loc='bottom')
 
 ```
 
@@ -253,12 +253,16 @@ mu.pl.embedding(mdata, basis = "gex:umap", color = "gex:predicted_labels")
 ```{python}
 #| label: fig-expansion-plot
 #| fig-cap: 'Barplot'
-#| fig-cap-location: top
-#| fig-height: 10
-#| fig-width: 10
+#| fig-cap-location: bottom
+#| fig-height: 12
+#| fig-width: 18
 
 cluster_identity = f"cc_{sequence_type}_identity"
-ir.pl.clonal_expansion(mdata, target_col = cluster_identity, groupby = "gex:predicted_labels")
+ir.pl.clonal_expansion(
+    mdata, 
+    target_col = cluster_identity, 
+    groupby = "gex:predicted_labels",
+    figsize=[12, 18])
 
 ```
 
@@ -267,16 +271,17 @@ ir.pl.clonal_expansion(mdata, target_col = cluster_identity, groupby = "gex:pred
 ```{python}
 #| label: fig-spectratype-plot
 #| fig-cap: 'Spectratype'
-#| fig-cap-location: top
-#| fig-height: 10
-#| fig-width: 10
+#| fig-cap-location: bottom
+#| fig-height: 18
+#| fig-width: 12
 
 ir.pl.spectratype(
     mdata,
     color = "gex:predicted_labels",
     viztype = "curve",
     curve_layout = "shifted",
-    kde_kws = {"kde_norm": False}
+    fig_kws={"figsize": [16, 12]},
+    kde_kws={"kde_norm": False},
 )
 
 ```

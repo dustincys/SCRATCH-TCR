@@ -33,7 +33,10 @@ import os
 project_name         = "project"
 path_vdj_folder      = "/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128514/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128513/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128512/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128528/;/Users/affaustino/Projects/SCRATCH-TCR/data/SCRATCH_ALIGN:CELLRANGER_VDJ/SRX5128527/"
 meta_data_csv        = "/Users/affaustino/Projects/SCRATCH-TCR/data/pipeline_info/samplesheet.valid.csv"
+
 clonotype_definition = "VDJ"
+distance_metric      = "identity"
+sequence_type        = "aa"
 
 # Create data and figures
 for folder in ['data', 'figures']: 
@@ -154,15 +157,18 @@ ir.pp.ir_dist(adata_tcr, sequence = "aa")
 ```{python}
 
 ir.tl.define_clonotype_clusters(
-    adata_tcr, sequence = "aa", receptor_arms = clonotype_definition, dual_ir = "primary_only", n_jobs = 1
+    adata_tcr, metric = distance_metric, sequence = sequence_type, receptor_arms = clonotype_definition, dual_ir = "primary_only", n_jobs = 1
 )
 
 ```
 
 ```{python}
 
-ir.tl.clonotype_network(adata_tcr, min_cells = 50, sequence = "aa")
-adata_tcr.obs["cc_aa_identity"] = adata_tcr.obs["cc_aa_identity"].astype("str")
+# Cluster identity
+cluster_identity = f"cc_{sequence_type}_identity"
+
+ir.tl.clonotype_network(adata_tcr, min_cells = 50, sequence = sequence_type)
+adata_tcr.obs[cluster_identity] = adata_tcr.obs[cluster_identity].astype("str")
 
 ```
 
@@ -176,7 +182,7 @@ adata_tcr.obs["cc_aa_identity"] = adata_tcr.obs["cc_aa_identity"].astype("str")
 
 _ = ir.pl.group_abundance(
     adata_tcr,
-    groupby = "cc_aa_identity",
+    groupby = cluster_identity,
     target_col = "sample",
     max_cols = 15,
     fig_kws = {"dpi": 100},
@@ -191,7 +197,7 @@ _ = ir.pl.group_abundance(
 
 _ = ir.pl.group_abundance(
     adata_tcr,
-    groupby = "cc_aa_identity",
+    groupby = cluster_identity,
     target_col = "patient_id",
     max_cols = 15,
     fig_kws = {"dpi": 100},
@@ -206,7 +212,7 @@ _ = ir.pl.group_abundance(
 
 _ = ir.pl.group_abundance(
     adata_tcr,
-    groupby ="cc_aa_identity",
+    groupby = cluster_identity,
     target_col = "timepoint",
     max_cols = 15,
     fig_kws = {"dpi": 100},

@@ -16,6 +16,30 @@
                         "description": "Select the input file."
                     }
                 }
+            },
+            "repertoire_parameters": {
+                "title": "Repertoire parameters",
+                "type": "object",
+                "properties": {
+                    "distance_metric": {
+                        "type": "string",
+                        "title": "Distance metrics",
+                        "enum": [
+                            "VDJ",
+                            "VJ",
+                            "all",
+                            "any"
+                        ]
+                    },
+                    "sequence_type": {
+                        "type": "string",
+                        "title": "Distance metrics",
+                        "enum": [
+                            "aa",
+                            "nt"
+                        ]
+                    }
+                }    
             }
         }
     }

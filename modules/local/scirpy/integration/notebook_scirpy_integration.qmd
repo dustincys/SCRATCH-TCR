@@ -33,6 +33,7 @@ import os
 project_name         = "project"
 gex_anndata          = "/workspaces/SCRATCH-TCR/data/project_celltypist_annotation_object.h5ad"
 vdj_anndata          = "/workspaces/SCRATCH-TCR/data/project_tcr_repertoire_object.h5ad"
+
 clonotype_definition = "VDJ"
 
 # Create data and figures
@@ -212,13 +213,13 @@ print(
 
 ```{python}
 
-mu.pl.embedding(mdata, basis="gex:umap", color= "airr:receptor_type")
+mu.pl.embedding(mdata, basis = "gex:umap", color = "airr:receptor_type")
 
 ```
 
 ```{python}
 
-mu.pl.embedding(mdata, basis="gex:umap", color ="airr:chain_pairing", groups = "multichain")
+mu.pl.embedding(mdata, basis = "gex:umap", color = "airr:chain_pairing")
 
 ```
 
@@ -226,7 +227,7 @@ mu.pl.embedding(mdata, basis="gex:umap", color ="airr:chain_pairing", groups = "
 
 ```{python}
 
-mu.pl.embedding(mdata, basis="gex:umap", color = "gex:celltypist_cell_label_coarse")
+mu.pl.embedding(mdata, basis = "gex:umap", color = "gex:predicted_labels")
 
 ```
 

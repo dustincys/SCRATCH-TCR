@@ -34,7 +34,7 @@
                     },
                     "distance_metric": {
                         "type": "string",
-                        "title": "Sequence type",
+                        "title": "Distance metric",
                         "default": "identity",
                         "enum": [
                             "levenshtein",

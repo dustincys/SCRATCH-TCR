@@ -108,11 +108,15 @@ print("Number of overlapping cells:", num_overlapping_cells)
 
 ```{python}
 
-if num_overlapping_cells == 0:
+def update_obs_names(row):
+    # Extract the 16-base cell barcode
+    cell_id = re.search(r"[ACGT]{16}-1", row.name).group()
+    return f"{row['patient_id']}_{row['timepoint']}_{cell_id}"
 
+if num_overlapping_cells == 0:
     # Fixing barcoding
-    adata_gex.obs_names = [re.search(r"[ACGT]{16}-1", cell_id).group() for cell_id in adata_gex.obs_names]
-    adata_tcr.obs_names = [re.search(r"[ACGT]{16}-1", cell_id).group() for cell_id in adata_tcr.obs_names]
+    adata_gex.obs_names = adata_gex.obs.apply(update_obs_names, axis=1)
+    adata_tcr.obs_names = adata_tcr.obs.apply(update_obs_names, axis=1)
     
 num_overlapping_cells = overlapping_cells(adata_tcr, adata_gex)
 print("Number of overlapping cells:", num_overlapping_cells)
@@ -235,8 +239,8 @@ mu.pl.embedding(
     mdata, 
     basis = "gex:umap", 
     color = "gex:predicted_labels", 
-    ncols = 1, 
-    legend_loc = 'lower center')
+    ncols = 1
+)
 
 ```
 

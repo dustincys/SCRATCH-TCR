@@ -250,7 +250,7 @@ mu.pl.embedding(mdata, basis = "gex:umap", color = "gex:predicted_labels", legen
 
 ```{python}
 
-print(f"Clonotype definition based on {clonotype_definition} at {sequence_type}")
+print(f"Clonotype definition based on {clonotype_definition} at {sequence_type} level using {distance_metric}")
 
 ```
 

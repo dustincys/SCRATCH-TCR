@@ -168,17 +168,6 @@ mdata = MuData({"gex": adata_gex, "airr": adata_tcr})
 
 ```
 
-## Calculating dimensions
-
-```{python}
-
-sc.pp.log1p(mdata["gex"])
-sc.pp.pca(mdata["gex"], svd_solver="arpack")
-sc.pp.neighbors(mdata["gex"])
-sc.tl.umap(mdata["gex"])
-
-```
-
 ## Clonotype QC
 
 ```{python}
@@ -268,7 +257,7 @@ ir.pl.clonal_expansion(
     mdata, 
     target_col = cluster_identity, 
     groupby = "gex:predicted_labels",
-    figsize=[12, 18])
+    figsize=[18, 12])
 
 ```
 

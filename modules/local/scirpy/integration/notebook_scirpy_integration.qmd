@@ -35,6 +35,8 @@ gex_anndata          = "/workspaces/SCRATCH-TCR/data/project_celltypist_annotati
 vdj_anndata          = "/workspaces/SCRATCH-TCR/data/project_tcr_repertoire_object.h5ad"
 
 clonotype_definition = "VDJ"
+distance_metric      = "identity"
+sequence_type        = "aa"
 
 # Create data and figures
 for folder in ['data', 'figures']: 
@@ -212,12 +214,22 @@ print(
 ## Clonotype UMAP
 
 ```{python}
+#| label: fig-umap-receptor-plot
+#| fig-cap: 'UMAP'
+#| fig-cap-location: top
+#| fig-height: 10
+#| fig-width: 10
 
 mu.pl.embedding(mdata, basis = "gex:umap", color = "airr:receptor_type")
 
 ```
 
 ```{python}
+#| label: fig-umap-chaintype-plot
+#| fig-cap: 'UMAP'
+#| fig-cap-location: top
+#| fig-height: 10
+#| fig-width: 10
 
 mu.pl.embedding(mdata, basis = "gex:umap", color = "airr:chain_pairing")
 
@@ -226,10 +238,52 @@ mu.pl.embedding(mdata, basis = "gex:umap", color = "airr:chain_pairing")
 ## Cell annotation
 
 ```{python}
+#| label: fig-umap-chaintype-plot
+#| fig-cap: 'UMAP'
+#| fig-cap-location: top
+#| fig-height: 10
+#| fig-width: 10
 
 mu.pl.embedding(mdata, basis = "gex:umap", color = "gex:predicted_labels")
 
 ```
+
+## Clonal expansion
+
+```{python}
+#| label: fig-expansion-plot
+#| fig-cap: 'Barplot'
+#| fig-cap-location: top
+#| fig-height: 10
+#| fig-width: 10
+
+cluster_identity = f"cc_{sequence_type}_identity"
+ir.pl.clonal_expansion(mdata, target_col = cluster_identity, groupby = "gex:predicted_labels")
+
+```
+
+## Spectratype analysis
+
+```{python}
+#| label: fig-spectratype-plot
+#| fig-cap: 'Spectratype'
+#| fig-cap-location: top
+#| fig-height: 10
+#| fig-width: 10
+
+ir.pl.spectratype(
+    mdata,
+    color = "gex:predicted_labels",
+    viztype = "curve",
+    curve_layout = "shifted",
+    kde_kws = {"kde_norm": False}
+)
+
+```
+
+:::{.callout-tip}
+The @fig-spectratype-plot provides more information about V(D)J sequences heterogeneity. Potential aberrations in the distribution of CDR3 length indicating expanded populations of clones with a bias in CDR3 length.
+:::
 
 ## Saving Data object
 

@@ -177,16 +177,17 @@ adata_tcr.obs[cluster_identity] = adata_tcr.obs[cluster_identity].astype("str")
 ## By sample
 
 ```{python}
-
-# By sample
+#| label: fig-barplot-sample-plot
+#| fig-cap: 'Barplot'
+#| fig-cap-location: top
+#| fig-height: 10
+#| fig-width: 10
 
 _ = ir.pl.group_abundance(
     adata_tcr,
     groupby = cluster_identity,
     target_col = "sample",
-    max_cols = 15,
-    fig_kws = {"dpi": 100},
-    figsize = [10, 10],
+    max_cols = 15
 )
 
 ```
@@ -194,14 +195,17 @@ _ = ir.pl.group_abundance(
 ## By patient
 
 ```{python}
+#| label: fig-barplot-patient-plot
+#| fig-cap: 'Barplot'
+#| fig-cap-location: top
+#| fig-height: 10
+#| fig-width: 10
 
 _ = ir.pl.group_abundance(
     adata_tcr,
     groupby = cluster_identity,
     target_col = "patient_id",
-    max_cols = 15,
-    fig_kws = {"dpi": 100},
-    figsize = [10, 10],
+    max_cols = 15
 )
 
 ```
@@ -209,14 +213,17 @@ _ = ir.pl.group_abundance(
 ## By treatment
 
 ```{python}
+#| label: fig-barplot-treatment-plot
+#| fig-cap: 'Barplot'
+#| fig-cap-location: top
+#| fig-height: 10
+#| fig-width: 10
 
 _ = ir.pl.group_abundance(
     adata_tcr,
     groupby = cluster_identity,
     target_col = "timepoint",
-    max_cols = 15,
-    fig_kws = {"dpi": 100},
-    figsize = [10, 10],
+    max_cols = 15
 )
 
 ```

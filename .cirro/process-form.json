@@ -7,6 +7,7 @@
             "pipeline_parameters": {
             "title": "Pipeline parameters",
             "type": "object",
+            "required": ["input_annotated_object"],
             "properties": {
                     "input_annotated_object": {
                         "type": "string",

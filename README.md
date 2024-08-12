@@ -28,7 +28,7 @@ nextflow run main.nf -profile [docker/singularity] --input_vdj_contigs <path/to/
 - `--input_exp_table`: Path to the expression table input file (required).
 - `--input_annotated_object`: Path to the annotated object input file (required).
 - `--project_name`: Name of the project for organizing results (required).
-- `-profile`: Execution profile. Use `docker` or `singularity` depending on your containerization preference.
+- `-profile`: Execution profile. Use `docker` or `singularity`  depending on your containerization preference. Alternatively, you can create an HPC-aware profile for your institution.
 
 ### Example
 ```bash
@@ -36,7 +36,7 @@ nextflow run main.nf -profile docker --input_vdj_contigs data/vdj_contigs.csv --
 ```
 
 ## Configuration
-The subworkflow can be configured using the `nextflow.config` file. Modify this file to set default parameters, profiles, and other settings.
+The subworkflow can be configured using the `nextflow.config` file. Modify this file to set default parameters, profiles, and other settings. An institution profile should be created whenever running the pipeline in an HPC environment, please refer to [Step-by-step guide to writing an institutional profile](https://nf-co.re/docs/tutorials/use_nf-core_pipelines/config_institutional_profile)
 
 ## Output
 Upon successful completion, the results will be available in a directory named after your project (`<project_name>`). You can open the report in your browser:
